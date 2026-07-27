@@ -1,0 +1,102 @@
+{
+  "en": {
+    "nav": {
+      "projects": "Projects",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "hero": {
+      "subtitle": "Software Developer",
+      "description": "I like to build accessible, digital experiences for mobile, gaming and AI",
+      "bio1": "I'm a software developer with a Bachelor's in Computer Science and a focus on Computer Vision. I enjoy building things that live on screens — from mobile apps for iOS and Android to immersive games in Unity.",
+      "bio2": "My interests span across AI, deep learning, and creative coding. Whether it's training neural networks, designing intuitive user interfaces, or prototyping game mechanics, I love turning ideas into interactive experiences."
+    },
+    "projectList": {
+      "title": "Projects"
+    },
+    "projectCard": {
+      "projectInfo": "Project Info",
+      "year": "Year",
+      "techStack": "Tech Stack",
+      "liveDemo": "Live Demo",
+      "github": "See on Github"
+    },
+    "about": {
+      "title": "About Me",
+      "text1": "I hold a Bachelor's degree in Computer Science with a specialization in Computer Vision. During my studies, I developed a passion for building software that bridges the gap between complex algorithms and real-world applications.",
+      "text2": "Beyond my academic background, I enjoy creating mobile apps for iOS and Android, developing games in Unity, and experimenting with AI and deep learning. I'm always looking for new challenges that combine technical depth with creative problem-solving."
+    },
+    "build": {
+      "step1Title": "Discover",
+      "step1Desc": "Understanding your goals, requirements, and constraints. We discuss your vision and define what success looks like.",
+      "step2Title": "Design",
+      "step2Desc": "Creating wireframes, mockups, and prototypes. You review and provide feedback before any code is written.",
+      "step3Title": "Develop & Deliver",
+      "step3Desc": "Building, testing, and launching your product. Clean code, thorough testing, and a smooth handoff."
+    },
+    "contact": {
+      "title": "Get in touch",
+      "intro": "Lets work together!",
+      "emailLabel": "Email Address",
+      "nameLabel": "Name",
+      "messageLabel": "Message",
+      "send": "Send"
+    },
+    "footer": {
+      "text": "You want to know more or work together?<br>Reach out to one of my socials or write me an email in the contact form.",
+      "impressum": "Impressum",
+      "contact": "Contact",
+      "datenschutz": "Datenschutz"
+    }
+  },
+  "de": {
+    "nav": {
+      "projects": "Projekte",
+      "about": "Über",
+      "contact": "Kontakt"
+    },
+    "hero": {
+      "subtitle": "Softwareentwickler",
+      "description": "Ich entwickle barrierefreie, digitale Erlebnisse für Mobile, Gaming und KI",
+      "bio1": "Ich bin Softwareentwickler mit einem Bachelor in Informatik und Schwerpunkt Computer Vision. Ich baue gerne Dinge, die auf Bildschirmen leben — von mobilen Apps für iOS und Android bis hin zu immersiven Spielen in Unity.",
+      "bio2": "Meine Interessen reichen von KI und Deep Learning bis hin zu kreativem Coding. Ob neuronale Netze trainieren, intuitive Benutzeroberflächen gestalten oder Spielmechaniken prototypen — ich verwandle gerne Ideen in interaktive Erlebnisse."
+    },
+    "projectList": {
+      "title": "Projekte"
+    },
+    "projectCard": {
+      "projectInfo": "Projektinfo",
+      "year": "Jahr",
+      "techStack": "Tech Stack",
+      "liveDemo": "Live Demo",
+      "github": "Auf Github ansehen"
+    },
+    "about": {
+      "title": "Über mich",
+      "text1": "Ich habe einen Bachelor-Abschluss in Informatik mit Spezialisierung auf Computer Vision. Während meines Studiums entwickelte ich eine Leidenschaft für Software, die komplexe Algorithmen mit realen Anwendungen verbindet.",
+      "text2": "Neben meinem akademischen Hintergrund entwickle ich gerne mobile Apps für iOS und Android, erstelle Spiele in Unity und experimentiere mit KI und Deep Learning. Ich suche immer nach neuen Herausforderungen, die technische Tiefe mit kreativem Problemlösen verbinden."
+    },
+    "build": {
+      "step1Title": "Verstehen",
+      "step1Desc": "Ihre Ziele, Anforderungen und Rahmenbedingungen verstehen. Wir besprechen Ihre Vision und definieren, wie Erfolg aussieht.",
+      "step2Title": "Gestalten",
+      "step2Desc": "Wireframes, Mockups und Prototypen erstellen. Sie prüfen und geben Feedback, bevor Code geschrieben wird.",
+      "step3Title": "Entwickeln & Liefern",
+      "step3Desc": "Ihr Produkt bauen, testen und launchen. Sauberer Code, gründliches Testen und eine reibungslose Übergabe."
+    },
+    "contact": {
+      "title": "Kontakt aufnehmen",
+      "intro": "Lass uns zusammenarbeiten!",
+      "emailLabel": "E-Mail-Adresse",
+      "nameLabel": "Name",
+      "messageLabel": "Nachricht",
+      "send": "Senden"
+    },
+    "footer": {
+      "text": "Du möchtest mehr erfahren oder zusammenarbeiten?<br>Schreib mir über meine Socials oder nutze das Kontaktformular.",
+      "impressum": "Impressum",
+      "contact": "Kontakt",
+      "datenschutz": "Datenschutz"
+    }
+  }
+}
