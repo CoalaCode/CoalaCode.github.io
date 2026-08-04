@@ -1,14 +1,30 @@
 {
   "en": {
+    "meta": {
+      "title": "Max Schneider — Software Developer",
+      "description": "Portfolio of Max Schneider (CoalaCode), a software developer building accessible digital experiences for mobile, gaming and AI."
+    },
+    "a11y": {
+      "skipToContent": "Skip to main content",
+      "mainNav": "Main navigation",
+      "mobileNav": "Mobile navigation",
+      "projectNav": "Project categories",
+      "legalNav": "Legal",
+      "socialLinks": "Social links",
+      "toggleMenu": "Toggle menu",
+      "switchToGerman": "Switch to German",
+      "switchToEnglish": "Switch to English",
+      "logo": "CoalaCode logo"
+    },
     "nav": {
       "projects": "Projects",
-      "about": "About",
+      "about": "How I work",
       "contact": "Contact"
     },
     "hero": {
       "subtitle": "Software Developer",
-      "description": "I like to build accessible, digital experiences for mobile, gaming and AI",
-      "bio1": "I'm a software developer with a Bachelor's in Computer Science and a focus on Computer Vision. I enjoy building things that live on screens — from mobile apps for iOS and Android to immersive games in Unity.",
+      "description": "I build for mobile, AI & gaming",
+      "bio1": "I'm a software developer with a Bachelor's in Media Computer Science and a focus on Computer Vision. I enjoy building things that are visual — from mobile apps for iOS and Android, through image analysis, classification and segmentation, to immersive games in Unity.",
       "bio2": "My interests span across AI, deep learning, and creative coding. Whether it's training neural networks, designing intuitive user interfaces, or prototyping game mechanics, I love turning ideas into interactive experiences."
     },
     "projectList": {
@@ -19,46 +35,62 @@
       "year": "Year",
       "techStack": "Tech Stack",
       "liveDemo": "Live Demo",
-      "github": "See on Github"
-    },
-    "about": {
-      "title": "About Me",
-      "text1": "I hold a Bachelor's degree in Computer Science with a specialization in Computer Vision. During my studies, I developed a passion for building software that bridges the gap between complex algorithms and real-world applications.",
-      "text2": "Beyond my academic background, I enjoy creating mobile apps for iOS and Android, developing games in Unity, and experimenting with AI and deep learning. I'm always looking for new challenges that combine technical depth with creative problem-solving."
+      "github": "See on Github",
+      "image": "Image",
+      "prevImage": "Previous image",
+      "nextImage": "Next image"
     },
     "build": {
-      "step1Title": "Discover",
-      "step1Desc": "Understanding your goals, requirements, and constraints. We discuss your vision and define what success looks like.",
+      "title": "How I work",
+      "step1Title": "Understand",
+      "step1Desc": "I start by breaking the problem into small pieces — what is needed, who the audience is, and which constraints count. Clear goals before the first line of code.",
       "step2Title": "Design",
-      "step2Desc": "Creating wireframes, mockups, and prototypes. You review and provide feedback before any code is written.",
-      "step3Title": "Develop & Deliver",
-      "step3Desc": "Building, testing, and launching your product. Clean code, thorough testing, and a smooth handoff."
+      "step2Desc": "Then I sketch and prototype in Figma. Iterating on a mockup is cheaper, faster and easier to compare.",
+      "step3Title": "Implement",
+      "step3Desc": "Then I build an MVP, test, keep refining and add new features. Clean code, version control and planning are what carry it to long-term success."
     },
     "contact": {
       "title": "Get in touch",
-      "intro": "Lets work together!",
-      "emailLabel": "Email Address",
-      "nameLabel": "Name",
-      "messageLabel": "Message",
-      "send": "Send"
+      "intro": "Interested in my work, or want to talk about a role? Write me.",
+      "copy": "Copy email address",
+      "copied": "Email address copied",
+      "copyFailed": "Could not copy — please select the address manually"
     },
     "footer": {
-      "text": "You want to know more or work together?<br>Reach out to one of my socials or write me an email in the contact form.",
-      "impressum": "Impressum",
+      "text": "You want to know more or work together?<br>Reach out to one of my socials or write me an email.",
       "contact": "Contact",
-      "datenschutz": "Datenschutz"
+      "datenschutz": "Privacy"
+    },
+    "privacy": {
+      "backToSite": "Back to the site"
     }
   },
   "de": {
+    "meta": {
+      "title": "Max Schneider — Softwareentwickler",
+      "description": "Portfolio von Max Schneider (CoalaCode), Softwareentwickler für Mobile, KI, Websites und Gaming."
+    },
+    "a11y": {
+      "skipToContent": "Zum Hauptinhalt springen",
+      "mainNav": "Hauptnavigation",
+      "mobileNav": "Mobile Navigation",
+      "projectNav": "Projektkategorien",
+      "legalNav": "Rechtliches",
+      "socialLinks": "Social-Media-Links",
+      "toggleMenu": "Menü umschalten",
+      "switchToGerman": "Zu Deutsch wechseln",
+      "switchToEnglish": "Zu Englisch wechseln",
+      "logo": "CoalaCode Logo"
+    },
     "nav": {
       "projects": "Projekte",
-      "about": "Über",
+      "about": "Arbeitsweise",
       "contact": "Kontakt"
     },
     "hero": {
       "subtitle": "Softwareentwickler",
-      "description": "Ich entwickle barrierefreie, digitale Erlebnisse für Mobile, Gaming und KI",
-      "bio1": "Ich bin Softwareentwickler mit einem Bachelor in Informatik und Schwerpunkt Computer Vision. Ich baue gerne Dinge, die auf Bildschirmen leben — von mobilen Apps für iOS und Android bis hin zu immersiven Spielen in Unity.",
+      "description": "Ich entwickle für Mobile, KI, Websites & Gaming",
+      "bio1": "Ich bin Softwareentwickler mit einem Bachelor in Internationale Medieninformatik und Schwerpunkt Computer Vision. Ich baue gerne Dinge, die visuell sind — von mobilen Apps für iOS und Android über Bildanalyse, Klassifizierung und Segmentierung bis hin zu immersiven Spielen in Unity.",
       "bio2": "Meine Interessen reichen von KI und Deep Learning bis hin zu kreativem Coding. Ob neuronale Netze trainieren, intuitive Benutzeroberflächen gestalten oder Spielmechaniken prototypen — ich verwandle gerne Ideen in interaktive Erlebnisse."
     },
     "projectList": {
@@ -69,34 +101,34 @@
       "year": "Jahr",
       "techStack": "Tech Stack",
       "liveDemo": "Live Demo",
-      "github": "Auf Github ansehen"
-    },
-    "about": {
-      "title": "Über mich",
-      "text1": "Ich habe einen Bachelor-Abschluss in Informatik mit Spezialisierung auf Computer Vision. Während meines Studiums entwickelte ich eine Leidenschaft für Software, die komplexe Algorithmen mit realen Anwendungen verbindet.",
-      "text2": "Neben meinem akademischen Hintergrund entwickle ich gerne mobile Apps für iOS und Android, erstelle Spiele in Unity und experimentiere mit KI und Deep Learning. Ich suche immer nach neuen Herausforderungen, die technische Tiefe mit kreativem Problemlösen verbinden."
+      "github": "Auf Github ansehen",
+      "image": "Bild",
+      "prevImage": "Vorheriges Bild",
+      "nextImage": "Nächstes Bild"
     },
     "build": {
+      "title": "Wie ich arbeite",
       "step1Title": "Verstehen",
-      "step1Desc": "Ihre Ziele, Anforderungen und Rahmenbedingungen verstehen. Wir besprechen Ihre Vision und definieren, wie Erfolg aussieht.",
+      "step1Desc": "Ich beginne damit, das Problem in kleine Teile zu zerlegen — was wird gebraucht, wer ist die Zielgruppe und welche Rahmenbedingungen zählen. Klare Ziele, bevor die erste Zeile Code entsteht.",
       "step2Title": "Gestalten",
-      "step2Desc": "Wireframes, Mockups und Prototypen erstellen. Sie prüfen und geben Feedback, bevor Code geschrieben wird.",
-      "step3Title": "Entwickeln & Liefern",
-      "step3Desc": "Ihr Produkt bauen, testen und launchen. Sauberer Code, gründliches Testen und eine reibungslose Übergabe."
+      "step2Desc": "Dann skizziere und prototype ich in Figma. An einem Mockup zu iterieren ist günstiger, schneller und vergleichbarer.",
+      "step3Title": "Implementieren",
+      "step3Desc": "Dann baue ich ein MVP, teste, verfeinere weiter und implementiere neue Features. Dabei sind sauberer Code, Versionskontrolle und Planung wichtig für den langfristigen Erfolg."
     },
     "contact": {
       "title": "Kontakt aufnehmen",
-      "intro": "Lass uns zusammenarbeiten!",
-      "emailLabel": "E-Mail-Adresse",
-      "nameLabel": "Name",
-      "messageLabel": "Nachricht",
-      "send": "Senden"
+      "intro": "Interesse an meiner Arbeit oder eine offene Stelle? Schreib mir.",
+      "copy": "E-Mail-Adresse kopieren",
+      "copied": "E-Mail-Adresse kopiert",
+      "copyFailed": "Kopieren nicht möglich — bitte die Adresse manuell markieren"
     },
     "footer": {
-      "text": "Du möchtest mehr erfahren oder zusammenarbeiten?<br>Schreib mir über meine Socials oder nutze das Kontaktformular.",
-      "impressum": "Impressum",
+      "text": "Du möchtest mehr erfahren oder zusammenarbeiten?<br>Schreib mir über meine Socials oder per E-Mail.",
       "contact": "Kontakt",
       "datenschutz": "Datenschutz"
+    },
+    "privacy": {
+      "backToSite": "Zurück zur Website"
     }
   }
 }

@@ -3,30 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CoalaCode - Software Developer</title>
-  <meta name="description" content="CoalaCode - Software Developer portfolio. Building accessible, digital experiences for mobile, gaming and AI.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Max Schneider — Software Developer</title>
+  <meta name="description" content="Portfolio of Max Schneider (CoalaCode), a software developer building accessible digital experiences for mobile, gaming and AI.">
+
+  <link rel="canonical" href="https://coalacode.github.io/">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Max Schneider — Software Developer">
+  <meta property="og:description" content="Portfolio of Max Schneider (CoalaCode), a software developer building accessible digital experiences for mobile, gaming and AI.">
+  <meta property="og:url" content="https://coalacode.github.io/">
+  <meta property="og:image" content="https://coalacode.github.io/assets/images/og-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Max Schneider — Software Developer">
+  <meta name="twitter:description" content="Portfolio of Max Schneider (CoalaCode), a software developer building accessible digital experiences for mobile, gaming and AI.">
+  <meta name="twitter:image" content="https://coalacode.github.io/assets/images/og-card.png">
+
+  <!-- Icons -->
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#111729">
+
+  <!-- Fonts are self-hosted: no request leaves this origin. -->
+  <link rel="preload" href="assets/fonts/roboto-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Max Schneider",
+    "alternateName": "CoalaCode",
+    "jobTitle": "Software Developer",
+    "url": "https://coalacode.github.io/",
+    "email": "mailto:coalacode@protonmail.com",
+    "knowsAbout": ["Software Development", "Computer Vision", "Mobile Development", "Deep Learning", "Game Development"],
+    "sameAs": [
+      "https://github.com/CoalaCode",
+      "https://www.linkedin.com/in/max-schneider-533742315/"
+    ]
+  }
+  </script>
 </head>
 <body>
+
+  <a class="skip-link" href="#main" data-i18n="a11y.skipToContent">Skip to main content</a>
 
   <div id="top"></div>
 
   <!-- Header -->
   <header class="header">
     <a href="#top" class="header__logo-link">
-      <img src="assets/images/personal-logo.png" alt="CoalaCode Logo" class="header__logo">
+      <img src="assets/images/personal-logo.png" alt="CoalaCode" class="header__logo" width="377" height="82" data-i18n-attr="alt:a11y.logo">
     </a>
-    <nav class="header__nav">
+    <nav class="header__nav" data-i18n-attr="aria-label:a11y.mainNav" aria-label="Main navigation">
       <div class="header__links">
         <a href="#projects" class="header__link" data-i18n="nav.projects">Projects</a>
-        <a href="#about" class="header__link" data-i18n="nav.about">About</a>
+        <a href="#how-i-work" class="header__link" data-i18n="nav.about">How I work</a>
         <a href="#contact" class="header__link" data-i18n="nav.contact">Contact</a>
       </div>
-      <span class="header__lang" id="lang-toggle">DE</span>
-      <button class="header__hamburger" aria-label="Toggle menu">
+      <button type="button" class="header__lang" id="lang-toggle" aria-label="Switch to German">DE</button>
+      <button type="button" class="header__hamburger" aria-controls="mobile-nav" aria-expanded="false" aria-label="Toggle menu" data-i18n-attr="aria-label:a11y.toggleMenu">
         <span></span>
         <span></span>
         <span></span>
@@ -35,33 +79,30 @@
   </header>
 
   <!-- Mobile Nav Overlay -->
-  <div class="mobile-nav" id="mobile-nav">
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" data-i18n-attr="aria-label:a11y.mobileNav">
     <a href="#projects" class="mobile-nav__link" data-i18n="nav.projects">Projects</a>
-    <a href="#about" class="mobile-nav__link" data-i18n="nav.about">About</a>
+    <a href="#how-i-work" class="mobile-nav__link" data-i18n="nav.about">How I work</a>
     <a href="#contact" class="mobile-nav__link" data-i18n="nav.contact">Contact</a>
-  </div>
+  </nav>
 
   <!-- Main Content -->
-  <main class="main">
+  <main class="main" id="main">
 
     <!-- Hero Section -->
     <section class="hero" id="hero">
       <div class="hero__info">
         <div class="hero__details">
-          <h1 class="hero__title">CoalaCode</h1>
+          <h1 class="hero__title">Max Schneider</h1>
           <p class="hero__subtitle" data-i18n="hero.subtitle">Software Developer</p>
-          <p class="hero__description" data-i18n="hero.description">I like to build accessible, digital experiences for mobile, gaming and AI</p>
+          <p class="hero__description" data-i18n="hero.description">I build for mobile, AI &amp; gaming</p>
         </div>
-        <div class="social-links">
-          <a href="#" aria-label="Instagram"><img src="assets/icons/instagram.png" alt="Instagram" class="social-links__icon"></a>
-          <a href="#" aria-label="X / Twitter"><img src="assets/icons/x-twitter.png" alt="X" class="social-links__icon"></a>
-          <a href="#" aria-label="GitHub"><img src="assets/icons/github.svg" alt="GitHub" class="social-links__icon"></a>
-          <a href="#" aria-label="LinkedIn"><img src="assets/icons/linkedin.svg" alt="LinkedIn" class="social-links__icon"></a>
-          <a href="#" aria-label="YouTube"><img src="assets/icons/youtube.svg" alt="YouTube" class="social-links__icon"></a>
+        <div class="social-links" role="list" aria-label="Social links" data-i18n-attr="aria-label:a11y.socialLinks">
+          <a href="https://github.com/CoalaCode" role="listitem" aria-label="GitHub" target="_blank" rel="noopener noreferrer"><img src="assets/icons/github.svg" alt="" class="social-links__icon" width="50" height="50"></a>
+          <a href="https://www.linkedin.com/in/max-schneider-533742315/" role="listitem" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><img src="assets/icons/linkedin.svg" alt="" class="social-links__icon" width="50" height="50"></a>
         </div>
       </div>
       <div class="hero__text">
-        <p class="hero__bio" data-i18n="hero.bio1">I'm a software developer with a Bachelor's in Computer Science and a focus on Computer Vision. I enjoy building things that live on screens — from mobile apps for iOS and Android to immersive games in Unity.</p>
+        <p class="hero__bio" data-i18n="hero.bio1">I'm a software developer with a Bachelor's in Media Computer Science and a focus on Computer Vision. I enjoy building things that are visual — from mobile apps for iOS and Android, through image analysis, classification and segmentation, to immersive games in Unity.</p>
         <p class="hero__bio" data-i18n="hero.bio2">My interests span across AI, deep learning, and creative coding. Whether it's training neural networks, designing intuitive user interfaces, or prototyping game mechanics, I love turning ideas into interactive experiences.</p>
       </div>
     </section>
@@ -70,7 +111,7 @@
     <section class="projects" id="projects">
       <aside class="project-list">
         <h2 class="project-list__title" data-i18n="projectList.title">Projects</h2>
-        <nav class="project-list__categories" id="project-categories">
+        <nav class="project-list__categories" id="project-categories" aria-label="Project categories" data-i18n-attr="aria-label:a11y.projectNav">
           <!-- Categories rendered by JS -->
         </nav>
       </aside>
@@ -79,43 +120,36 @@
       </div>
     </section>
 
-    <!-- About Section -->
-    <section class="about" id="about">
-      <h2 class="about__title" data-i18n="about.title">Hallo</h2>
-      <div class="about__text">
-        <p data-i18n="about.text1">I hold a Bachelor's degree in Computer Science with a specialization in Computer Vision. During my studies, I developed a passion for building software that bridges the gap between complex algorithms and real-world applications.</p>
-        <br>
-        <p data-i18n="about.text2">Beyond my academic background, I enjoy creating mobile apps for iOS and Android, developing games in Unity, and experimenting with AI and deep learning. I'm always looking for new challenges that combine technical depth with creative problem-solving.</p>
-      </div>
-    </section>
-
-    <!-- How I Build Section -->
-    <section class="build">
-      <div class="build-card">
-        <div class="build-card__image-wrapper">
-          <img src="assets/images/build-img.png" alt="Build step 1" class="build-card__image">
+    <!-- How I Work Section -->
+    <section class="build" id="how-i-work">
+      <h2 class="build__title" data-i18n="build.title">How I work</h2>
+      <div class="build__cards">
+        <div class="build-card">
+          <div class="build-card__image-wrapper">
+            <img src="assets/images/Planning.jpg" alt="Notes and sketches from the planning stage of a project" class="build-card__image" width="1200" height="900" loading="lazy" decoding="async">
+          </div>
+          <div class="build-card__content">
+            <h3 class="build-card__title" data-i18n="build.step1Title">Understand</h3>
+            <p class="build-card__description" data-i18n="build.step1Desc">I start by breaking the problem into small pieces — what is needed, who the audience is, and which constraints count. Clear goals before the first line of code.</p>
+          </div>
         </div>
-        <div class="build-card__content">
-          <h3 class="build-card__title" data-i18n="build.step1Title">Discover</h3>
-          <p class="build-card__description" data-i18n="build.step1Desc">Understanding your goals, requirements, and constraints. We discuss your vision and define what success looks like.</p>
+        <div class="build-card">
+          <div class="build-card__image-wrapper">
+            <img src="assets/images/FigmaWorkouts.jpg" alt="A Figma canvas showing the component library and screen designs for the Vivo app" class="build-card__image" width="1200" height="818" loading="lazy" decoding="async">
+          </div>
+          <div class="build-card__content">
+            <h3 class="build-card__title" data-i18n="build.step2Title">Design</h3>
+            <p class="build-card__description" data-i18n="build.step2Desc">Then I sketch and prototype in Figma. Iterating on a mockup is cheaper, faster and easier to compare.</p>
+          </div>
         </div>
-      </div>
-      <div class="build-card">
-        <div class="build-card__image-wrapper">
-          <img src="assets/images/FigmaWorkouts.png" alt="Build step 2" class="build-card__image">
-        </div>
-        <div class="build-card__content">
-          <h3 class="build-card__title" data-i18n="build.step2Title">Design</h3>
-          <p class="build-card__description" data-i18n="build.step2Desc">Creating wireframes, mockups, and prototypes. You review and provide feedback before any code is written.</p>
-        </div>
-      </div>
-      <div class="build-card">
-        <div class="build-card__image-wrapper">
-          <img src="assets/images/VSCodeFull.png" alt="Build step 3" class="build-card__image">
-        </div>
-        <div class="build-card__content">
-          <h3 class="build-card__title" data-i18n="build.step3Title">Develop & Deliver</h3>
-          <p class="build-card__description" data-i18n="build.step3Desc">Building, testing, and launching your product. Clean code, thorough testing, and a smooth handoff.</p>
+        <div class="build-card">
+          <div class="build-card__image-wrapper">
+            <img src="assets/images/VSCodeFull.jpg" alt="A code editor open on the source of one of my projects" class="build-card__image" width="1200" height="860" loading="lazy" decoding="async">
+          </div>
+          <div class="build-card__content">
+            <h3 class="build-card__title" data-i18n="build.step3Title">Implement</h3>
+            <p class="build-card__description" data-i18n="build.step3Desc">Then I build an MVP, test, keep refining and add new features. Clean code, version control and planning are what carry it to long-term success.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -123,43 +157,35 @@
     <!-- Contact Section -->
     <section class="contact" id="contact">
       <h2 class="contact__title" data-i18n="contact.title">Get in touch</h2>
-      <form class="contact__form" action="https://formspree.io/f/xpqzpgpw" method="POST">
-        <p class="contact__form-intro" data-i18n="contact.intro">Lets work together!</p>
-        <div class="contact__field">
-          <label class="contact__label" for="email" data-i18n="contact.emailLabel">Email Address</label>
-          <input class="contact__input" type="email" id="email" name="email" required>
+      <div class="contact__card">
+        <p class="contact__intro" data-i18n="contact.intro">Interested in my work, or want to talk about a role? Write me.</p>
+        <div class="contact__email-row">
+          <a class="contact__email" href="mailto:coalacode@protonmail.com">coalacode@protonmail.com</a>
+          <button type="button" class="contact__copy" data-email="coalacode@protonmail.com" aria-label="Copy email address" data-i18n-attr="aria-label:contact.copy">
+            <svg class="contact__copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+              <rect x="9" y="9" width="13" height="13" rx="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span data-i18n="contact.copy">Copy email address</span>
+          </button>
         </div>
-        <div class="contact__field">
-          <label class="contact__label" for="name" data-i18n="contact.nameLabel">Name</label>
-          <input class="contact__input" type="text" id="name" name="name" required>
-        </div>
-        <div class="contact__field contact__field--message">
-          <label class="contact__label" for="message" data-i18n="contact.messageLabel">Message</label>
-          <textarea class="contact__textarea" id="message" name="message" required></textarea>
-        </div>
-        <div class="contact__submit-row">
-          <button class="contact__submit" type="submit" data-i18n="contact.send">Send</button>
-        </div>
-      </form>
+        <p class="visually-hidden contact__copy-status" role="status" aria-live="polite"></p>
+      </div>
     </section>
 
   </main>
 
   <!-- Footer -->
   <footer class="footer">
-    <img src="assets/images/personal-logo.png" alt="CoalaCode Logo" class="footer__logo">
-    <p class="footer__text" data-i18n-html="footer.text">You want to know more or work together?<br>Reach out to one of my socials or write me an email in the contact form.</p>
-    <div class="social-links">
-      <a href="#" aria-label="Instagram"><img src="assets/icons/instagram.png" alt="Instagram" class="social-links__icon"></a>
-      <a href="#" aria-label="X / Twitter"><img src="assets/icons/x-twitter.png" alt="X" class="social-links__icon"></a>
-      <a href="#" aria-label="GitHub"><img src="assets/icons/github.svg" alt="GitHub" class="social-links__icon"></a>
-      <a href="#" aria-label="LinkedIn"><img src="assets/icons/linkedin.svg" alt="LinkedIn" class="social-links__icon"></a>
-      <a href="#" aria-label="YouTube"><img src="assets/icons/youtube.svg" alt="YouTube" class="social-links__icon"></a>
+    <img src="assets/images/personal-logo.png" alt="" class="footer__logo" width="377" height="82">
+    <p class="footer__text" data-i18n-html="footer.text">You want to know more or work together?<br>Reach out to one of my socials or write me an email.</p>
+    <div class="social-links" role="list" aria-label="Social links" data-i18n-attr="aria-label:a11y.socialLinks">
+      <a href="https://github.com/CoalaCode" role="listitem" aria-label="GitHub" target="_blank" rel="noopener noreferrer"><img src="assets/icons/github.svg" alt="" class="social-links__icon" width="50" height="50"></a>
+      <a href="https://www.linkedin.com/in/max-schneider-533742315/" role="listitem" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><img src="assets/icons/linkedin.svg" alt="" class="social-links__icon" width="50" height="50"></a>
     </div>
-    <nav class="footer__legal">
-      <a href="#" class="footer__legal-link" data-i18n="footer.impressum">Impressum</a>
+    <nav class="footer__legal" aria-label="Legal" data-i18n-attr="aria-label:a11y.legalNav">
       <a href="#contact" class="footer__legal-link" data-i18n="footer.contact">Contact</a>
-      <a href="#" class="footer__legal-link" data-i18n="footer.datenschutz">Datenschutz</a>
+      <a href="datenschutz.html" class="footer__legal-link" data-i18n="footer.datenschutz">Privacy</a>
     </nav>
   </footer>
 

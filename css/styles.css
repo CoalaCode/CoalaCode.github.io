@@ -1,4 +1,31 @@
 /* ========================================
+   Fonts (self-hosted)
+   ========================================
+   Served from this origin rather than fonts.gstatic.com, so no visitor IP is
+   transmitted to a third party. Both are variable fonts covering the full
+   weight range from a single file each. Latin subset only.
+   ======================================== */
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/inter-latin-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('../assets/fonts/roboto-latin-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ========================================
    CSS Custom Properties
    ======================================== */
 :root {
@@ -9,16 +36,13 @@
   --color-white: #ffffff;
   --color-offwhite: #c7c7c7;
   --color-gray-light: #e5e5ea;
-  --color-gray-dark: #484848;
   --color-blue: #2b7fff;
-  --color-input-bg: #f7f7f7;
 
   /* Fonts */
   --font-roboto: 'Roboto', sans-serif;
   --font-inter: 'Inter', sans-serif;
 
   /* Spacing (8px base scale) */
-  --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
@@ -75,6 +99,75 @@ img {
 }
 
 /* ========================================
+   Accessibility
+   ======================================== */
+
+/* Visible only to screen readers. Not display:none, which would remove it
+   from the accessibility tree entirely. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* A single focus ring for every interactive element. The previous stylesheet
+   had none at all, leaving keyboard users with no visible position. */
+:focus-visible {
+  outline: 3px solid var(--color-blue);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Only suppress the default ring where :focus-visible is supported, so
+   older browsers keep theirs. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  transform: translateY(-150%);
+  background: var(--color-blue);
+  /* Dark navy on the brand blue is 4.74:1; white on it is only 3.76:1, and at
+     16px/500 the large-text exemption does not apply. */
+  color: var(--color-bg);
+  font-weight: 500;
+  padding: 12px 20px;
+  border-bottom-right-radius: var(--radius-md);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Respect the visitor's motion preference: the stylesheet is otherwise full
+   of transitions and uses smooth scrolling unconditionally. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
    Header
    ======================================== */
 .header {
@@ -128,8 +221,9 @@ img {
   font-size: 14px;
   line-height: 1;
   color: var(--color-white);
+  background: none;
   cursor: pointer;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
   border-radius: var(--radius-pill);
   padding: 6px 14px;
   transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -329,11 +423,20 @@ img {
   padding: 20px;
   background: var(--color-card-bg);
   border-radius: 12px;
-  min-height: 320px;
 }
 
 .project-card__image-wrapper {
   flex: 0 0 45%;
+  /* Fixed 4:3, height derived from the fluid 45% width — so the image
+     scales with the viewport but never changes shape. The earlier
+     alternative (stretching to the row height) kept image and text the
+     same height, but let the crop shape vary card to card.
+     align-self keeps the image at the top instead of stretching, so every
+     image's top edge lines up with its project title down a category. The
+     text column is usually the taller of the two, so card background shows
+     below the image on narrower rows — that void is the accepted cost. */
+  aspect-ratio: 4 / 3;
+  align-self: flex-start;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
@@ -380,7 +483,10 @@ img {
   z-index: 10;
 }
 
-.project-card__image-wrapper:hover .project-card__arrow {
+/* :focus-within matters as much as :hover here — the arrows are buttons, and
+   without it a keyboard user tabs onto a control with opacity 0. */
+.project-card__image-wrapper:hover .project-card__arrow,
+.project-card__image-wrapper:focus-within .project-card__arrow {
   opacity: 1;
 }
 
@@ -408,16 +514,20 @@ img {
 }
 
 .project-card__dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
+  padding: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
+  /* Raised from 0.4 alpha, which fell below the 3:1 minimum for
+     non-text UI components against the card image. */
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.4);
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .project-card__dot:hover {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--color-white);
 }
 
 .project-card__dot--active {
@@ -497,11 +607,6 @@ img {
   justify-content: flex-end;
 }
 
-.project-card__tech-icon {
-  width: 20px;
-  height: 20px;
-}
-
 /* Project Links */
 .project-card__links {
   display: flex;
@@ -544,45 +649,22 @@ img {
   transform: scaleX(1);
 }
 
-.project-card__link:hover .project-card__link-content {
-  opacity: 1;
-}
-
 /* ========================================
-   About Section
+   How I Build Section
    ======================================== */
-.about {
+.build {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
 }
 
-.about__title {
+.build__title {
   font-weight: 500;
   font-size: 28px;
   line-height: 36px;
 }
 
-.about__text {
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 26px;
-  max-width: 520px;
-  color: var(--color-gray-light);
-}
-
-.about__text a {
-  color: var(--color-blue);
-}
-
-.about__text a:hover {
-  text-decoration: underline;
-}
-
-/* ========================================
-   How I Build Section
-   ======================================== */
-.build {
+.build__cards {
   display: flex;
   gap: var(--spacing-lg);
   align-items: flex-start;
@@ -646,126 +728,140 @@ img {
   letter-spacing: -0.5px;
 }
 
-.contact__form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.contact__card {
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-lg);
   background: var(--color-card-bg);
   padding: 40px;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  align-items: flex-start;
 }
 
-.contact__form-intro {
-  grid-column: 1 / -1;
+.contact__intro {
   font-weight: 500;
   font-size: 18px;
   line-height: 1.5;
   color: var(--color-offwhite);
-  margin-bottom: var(--spacing-sm);
 }
 
-.contact__field {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.contact__field--message {
-  grid-column: 1 / -1;
-}
-
-.contact__label {
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 1.4;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--color-gray-light);
-}
-
-.contact__input {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 14px 18px;
-  font-family: var(--font-roboto);
-  font-size: 16px;
-  color: var(--color-white);
-  height: 52px;
-  outline: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.contact__input::placeholder {
-  color: var(--color-gray-light);
-}
-
-.contact__input:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.contact__input:focus {
-  border-color: var(--color-blue);
-  background: rgba(43, 127, 255, 0.05);
-}
-
-.contact__textarea {
-  background: rgba(173, 173, 173, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 14px 18px;
-  font-family: var(--font-roboto);
-  font-size: 16px;
-  color: var(--color-white);
-  min-height: 160px;
-  resize: vertical;
-  outline: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.contact__textarea::placeholder {
-  color: var(--color-gray-light);
-}
-
-.contact__textarea:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.contact__textarea:focus {
-  border-color: var(--color-blue);
-  background: rgba(43, 127, 255, 0.05);
-}
-
-.contact__submit-row {
-  grid-column: 1 / -1;
+.contact__email-row {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  margin-top: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
-.contact__submit {
-  background: var(--color-blue);
+.contact__email {
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.3;
   color: var(--color-white);
-  border: none;
+  text-decoration: none;
+  border-bottom: 2px solid var(--color-blue);
+  padding-bottom: 2px;
+  transition: color 0.2s ease;
+  overflow-wrap: anywhere;
+}
+
+.contact__email:hover {
+  color: var(--color-blue);
+}
+
+.contact__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 10px;
-  padding: 14px 36px;
+  padding: 10px 18px;
   font-family: var(--font-roboto);
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.3px;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.contact__submit:hover {
-  background: #3d8bff;
-  transform: translateY(-1px);
+.contact__copy:hover {
+  border-color: var(--color-blue);
+  background: rgba(43, 127, 255, 0.12);
 }
 
-.contact__submit:active {
-  transform: translateY(0);
+.contact__copy--copied {
+  border-color: var(--color-blue);
+  background: rgba(43, 127, 255, 0.2);
+}
+
+.contact__copy-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.project-cards__error {
+  color: var(--color-offwhite);
+  font-size: 18px;
+  padding: var(--spacing-xl) 0;
+}
+
+/* ========================================
+   Legal pages (Datenschutz)
+   ======================================== */
+.legal {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) 0;
+}
+
+.legal h1 {
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.legal h2 {
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.3;
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.legal p,
+.legal li {
+  color: var(--color-offwhite);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: var(--spacing-md);
+}
+
+.legal ul {
+  list-style: disc;
+  padding-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.legal li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.legal a {
+  color: var(--color-blue);
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.legal__updated {
+  font-size: 14px;
+  color: var(--color-gray-light);
+  margin-top: var(--spacing-xl);
 }
 
 /* ========================================
@@ -913,16 +1009,8 @@ img {
     max-width: 100%;
   }
 
-  .build {
+  .build__cards {
     flex-direction: column;
-  }
-
-  .about__text {
-    max-width: 100%;
-  }
-
-  .contact__form {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -950,6 +1038,17 @@ img {
 
   .header__hamburger {
     display: flex;
+  }
+
+  /* The legal pages have no hamburger to fall back on, so keep their two
+     links in the bar rather than leaving them with no navigation at all. */
+  .header--simple .header__links {
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  .header--simple .header__link {
+    font-size: 14px;
   }
 
   .header__lang {
@@ -1013,7 +1112,6 @@ img {
   }
 
   .project-card {
-    min-height: auto;
     flex-direction: column;
     padding: 16px;
     gap: var(--spacing-md);
@@ -1023,9 +1121,11 @@ img {
   .project-card__image-wrapper {
     flex: none;
     width: 100%;
-    height: 180px;
-    min-height: 180px;
-    border-radius: 8px;
+    /* The base rule's align-self:flex-start acts on the cross axis, which is
+       horizontal once the card stacks — it would shrink the image to its
+       content width. Reset it explicitly rather than relying on width:100%
+       to mask it. The 4:3 ratio is inherited from the base rule. */
+    align-self: stretch;
   }
 
   .project-card__arrow {
@@ -1088,35 +1188,23 @@ img {
     font-size: 28px;
   }
 
-  .contact__form {
+  .contact__card {
     padding: 24px;
     gap: var(--spacing-md);
     border-radius: 12px;
   }
 
-  .contact__form-intro {
+  .contact__intro {
     font-size: 16px;
-    margin-bottom: 0;
   }
 
-  .contact__input {
-    height: 48px;
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 8px;
+  .contact__email {
+    font-size: 19px;
   }
 
-  .contact__textarea {
-    min-height: 140px;
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 8px;
-  }
-
-  .contact__submit {
+  .contact__copy {
     width: 100%;
-    padding: 14px 24px;
-    border-radius: 8px;
+    justify-content: center;
   }
 
   .footer__legal {

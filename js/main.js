@@ -1,5 +1,5 @@
 let translations = {};
-let currentLang = localStorage.getItem('lang') || 'en';
+let currentLang = localStorage.getItem('lang') || 'de';
 let projectsData = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -8,35 +8,72 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupLanguageToggle();
   setupHeaderScrollOffset();
   setupHamburgerMenu();
+  setupEmailCopy();
   applyTranslations(currentLang);
+  restoreHashPosition();
 });
+
+/**
+ * Fetches and parses a JSON file, throwing on a non-2xx response so that a
+ * deploy serving an HTML error page fails loudly instead of silently.
+ *
+ * `cache: 'no-cache'` forces a revalidation on every load. Without it the
+ * browser caches these files heuristically — the local server sends no
+ * Cache-Control at all, and GitHub Pages sends max-age=600 — and renders an
+ * outdated projects.json without ever asking the server. Unchanged files still
+ * come back as a cheap 304.
+ */
+async function fetchJson(url) {
+  const response = await fetch(url, { cache: 'no-cache' });
+  if (!response.ok) {
+    throw new Error(`${url} responded ${response.status}`);
+  }
+  return response.json();
+}
 
 /**
  * Loads translations from data/translations.json.
  */
 async function loadTranslations() {
   try {
-    const response = await fetch('data/translations.json');
-    translations = await response.json();
+    translations = await fetchJson('data/translations.json');
   } catch (error) {
     console.error('Failed to load translations:', error);
   }
 }
 
 /**
- * Loads projects from data/projects.json and renders them.
+ * Loads projects from data/projects.json. Rendering happens in
+ * applyTranslations() so the cards are only built once, in the right language.
  */
 async function loadProjects() {
+  // The legal pages share this script but have no projects section.
+  if (!document.getElementById('project-cards')) return;
+
   try {
-    const response = await fetch('data/projects.json');
-    projectsData = await response.json();
-    renderCategories(projectsData);
-    renderProjectCards(projectsData);
-    setupCarousels();
-    observeCategorySections();
+    projectsData = await fetchJson('data/projects.json');
   } catch (error) {
     console.error('Failed to load projects:', error);
+    showProjectsError();
   }
+}
+
+/**
+ * Replaces the projects section with a readable message when the data fails to
+ * load, rather than leaving the visitor with an empty page.
+ */
+function showProjectsError() {
+  const container = document.getElementById('project-cards');
+  if (!container) return;
+  const message = currentLang === 'de'
+    ? 'Die Projekte konnten nicht geladen werden. Bitte lade die Seite neu.'
+    : 'Projects could not be loaded. Please reload the page.';
+  container.innerHTML = '';
+  const p = document.createElement('p');
+  p.className = 'project-cards__error';
+  p.setAttribute('role', 'alert');
+  p.textContent = message;
+  container.appendChild(p);
 }
 
 /**
@@ -66,18 +103,47 @@ function applyTranslations(lang) {
     }
   });
 
+  // Attribute translations, e.g. data-i18n-attr="aria-label:a11y.mainNav".
+  // Several pairs can be separated by semicolons.
+  document.querySelectorAll('[data-i18n-attr]').forEach((el) => {
+    el.getAttribute('data-i18n-attr').split(';').forEach((pair) => {
+      const [attr, key] = pair.split(':').map((part) => part.trim());
+      if (!attr || !key) return;
+      const value = getNestedValue(t, key);
+      if (value !== undefined) el.setAttribute(attr, value);
+    });
+  });
+
+  document.title = getNestedValue(t, 'meta.title') || document.title;
+  const metaDescription = document.querySelector('meta[name="description"]');
+  const description = getNestedValue(t, 'meta.description');
+  if (metaDescription && description) metaDescription.setAttribute('content', description);
+
   const toggle = document.getElementById('lang-toggle');
   if (toggle) {
     toggle.textContent = lang === 'en' ? 'DE' : 'EN';
+    toggle.setAttribute('aria-label', getNestedValue(t, lang === 'en' ? 'a11y.switchToGerman' : 'a11y.switchToEnglish') || '');
   }
 
-  // Re-render project cards with the current language
-  if (projectsData.length) {
-    carouselIdCounter = 0; // Reset counter on re-render
-    renderProjectCards(projectsData);
-    setupCarousels();
-    observeCategorySections();
-  }
+  // Legal pages hold both languages inline so they survive with JS disabled.
+  document.querySelectorAll('[data-lang-block]').forEach((block) => {
+    block.hidden = block.getAttribute('data-lang-block') !== lang;
+  });
+
+  renderProjects();
+}
+
+/**
+ * Renders the category sidebar and project cards in the current language.
+ * Called once on load and again on every language switch.
+ */
+function renderProjects() {
+  if (!projectsData.length) return;
+  carouselIdCounter = 0;
+  renderCategories(projectsData);
+  renderProjectCards(projectsData);
+  setupCarousels();
+  observeCategorySections();
 }
 
 /**
@@ -105,12 +171,13 @@ function setupLanguageToggle() {
  */
 function renderCategories(projects) {
   const container = document.getElementById('project-categories');
+  if (!container) return;
   const categories = [...new Set(projects.map(p => p.category))];
 
   container.innerHTML = categories.map((category) => `
     <a href="#category-${slugify(category)}" class="project-list__category" data-category="${slugify(category)}">
       <span class="project-list__category-line"></span>
-      <span class="project-list__category-name">${category}</span>
+      <span class="project-list__category-name">${escapeHtml(category)}</span>
     </a>
   `).join('');
 }
@@ -120,13 +187,14 @@ function renderCategories(projects) {
  */
 function renderProjectCards(projects) {
   const container = document.getElementById('project-cards');
+  if (!container) return;
   const grouped = groupByCategory(projects);
   const t = translations[currentLang];
 
   container.innerHTML = Object.entries(grouped).map(([category, categoryProjects]) => `
     <div class="project-category" id="category-${slugify(category)}">
       ${categoryProjects.map((project, index) => `
-        ${index === 0 ? `<h3 class="project-category__title">${category}</h3>` : ''}
+        ${index === 0 ? `<h3 class="project-category__title">${escapeHtml(category)}</h3>` : ''}
         ${createProjectCard(project, t)}
       `).join('')}
     </div>
@@ -153,68 +221,77 @@ function createProjectCard(project, t) {
   const carouselId = `carousel-${carouselIdCounter++}`;
 
   const imagesHtml = images.map((img, index) => `
-    <img src="${img}" alt="${title}" class="project-card__image ${index === 0 ? 'project-card__image--active' : ''}" data-index="${index}" loading="lazy">
+    <img src="${escapeHtml(img)}" alt="${escapeHtml(imageAlt(project, title, index, images.length))}" class="project-card__image ${index === 0 ? 'project-card__image--active' : ''}" data-index="${index}" loading="lazy" decoding="async">
   `).join('');
 
+  const links = [
+    { url: project.liveUrl, label: liveDemoLabel, icon: 'assets/icons/arrow.svg' },
+    { url: project.repoUrl, label: githubLabel, icon: 'assets/icons/github-small.svg' }
+  ].filter(link => isRealUrl(link.url));
+
+  const linksHtml = links.length ? `
+    <div class="project-card__links">
+      ${links.map(link => `
+        <a href="${escapeHtml(link.url)}" class="project-card__link" target="_blank" rel="noopener noreferrer">
+          <span class="project-card__link-content">
+            ${escapeHtml(link.label)} <span class="visually-hidden">— ${escapeHtml(title)}</span>
+            <img src="${link.icon}" alt="" class="project-card__link-icon">
+          </span>
+          <span class="project-card__link-underline"></span>
+        </a>
+      `).join('')}
+    </div>
+  ` : '';
+
+  const prevLabel = t && t.projectCard ? t.projectCard.prevImage : 'Previous image';
+  const nextLabel = t && t.projectCard ? t.projectCard.nextImage : 'Next image';
+  const imageLabel = t && t.projectCard ? t.projectCard.image : 'Image';
+
   const arrowsHtml = hasMultipleImages ? `
-    <button class="project-card__arrow project-card__arrow--prev" aria-label="Previous image">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button type="button" class="project-card__arrow project-card__arrow--prev" aria-label="${escapeHtml(prevLabel)} — ${escapeHtml(title)}" aria-controls="${carouselId}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
         <path d="M15 18l-6-6 6-6"/>
       </svg>
     </button>
-    <button class="project-card__arrow project-card__arrow--next" aria-label="Next image">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button type="button" class="project-card__arrow project-card__arrow--next" aria-label="${escapeHtml(nextLabel)} — ${escapeHtml(title)}" aria-controls="${carouselId}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
         <path d="M9 18l6-6-6-6"/>
       </svg>
     </button>
-    <div class="project-card__dots">
-      ${images.map((_, index) => `<span class="project-card__dot ${index === 0 ? 'project-card__dot--active' : ''}" data-index="${index}"></span>`).join('')}
+    <div class="project-card__dots" role="tablist" aria-label="${escapeHtml(title)}">
+      ${images.map((_, index) => `<button type="button" role="tab" class="project-card__dot ${index === 0 ? 'project-card__dot--active' : ''}" data-index="${index}" aria-label="${escapeHtml(imageLabel)} ${index + 1}/${images.length}" aria-selected="${index === 0}"></button>`).join('')}
     </div>
+    <p class="visually-hidden project-card__status" role="status" aria-live="polite"></p>
   ` : '';
 
   return `
     <article class="project-card" data-carousel-id="${carouselId}">
-      <div class="project-card__image-wrapper">
+      <div class="project-card__image-wrapper" id="${carouselId}">
         ${imagesHtml}
         ${arrowsHtml}
       </div>
       <div class="project-card__info">
         <div>
-          <h4 class="project-card__header">${title}</h4>
-          <p class="project-card__description">${description}</p>
+          <h4 class="project-card__header">${escapeHtml(title)}</h4>
+          <p class="project-card__description">${escapeHtml(description)}</p>
         </div>
         <div>
           <div class="project-card__details">
-            <span class="project-card__details-title">${projectInfoLabel}</span>
+            <span class="project-card__details-title">${escapeHtml(projectInfoLabel)}</span>
             <div class="project-card__details-list">
               <div class="project-card__detail-row">
-                <span class="project-card__detail-label">${yearLabel}</span>
-                <span class="project-card__detail-value">${project.year}</span>
+                <span class="project-card__detail-label">${escapeHtml(yearLabel)}</span>
+                <span class="project-card__detail-value">${escapeHtml(project.year)}</span>
               </div>
               <div class="project-card__detail-row">
-                <span class="project-card__detail-label">${techStackLabel}</span>
+                <span class="project-card__detail-label">${escapeHtml(techStackLabel)}</span>
                 <div class="project-card__detail-icons">
-                  ${project.tags.map(tag => `<span class="project-card__detail-value">${tag}</span>`).join('')}
+                  ${project.tags.map(tag => `<span class="project-card__detail-value">${escapeHtml(tag)}</span>`).join('')}
                 </div>
               </div>
             </div>
           </div>
-          <div class="project-card__links">
-            <a href="${project.liveUrl}" class="project-card__link" target="_blank" rel="noopener noreferrer">
-              <span class="project-card__link-content">
-                ${liveDemoLabel}
-                <img src="assets/icons/arrow.svg" alt="" class="project-card__link-icon">
-              </span>
-              <span class="project-card__link-underline"></span>
-            </a>
-            <a href="${project.repoUrl}" class="project-card__link" target="_blank" rel="noopener noreferrer">
-              <span class="project-card__link-content">
-                ${githubLabel}
-                <img src="assets/icons/github-small.svg" alt="" class="project-card__link-icon">
-              </span>
-              <span class="project-card__link-underline"></span>
-            </a>
-          </div>
+          ${linksHtml}
         </div>
       </div>
     </article>
@@ -234,36 +311,59 @@ function setupCarousels() {
 
     if (images.length <= 1) return;
 
+    const status = wrapper.querySelector('.project-card__status');
     let currentIndex = 0;
 
-    function showImage(index) {
+    function showImage(index, announce) {
       images.forEach((img, i) => {
-        img.classList.toggle('project-card__image--active', i === index);
+        const isActive = i === index;
+        img.classList.toggle('project-card__image--active', isActive);
+        // Keeps inactive slides out of the accessibility tree; without this
+        // they stay readable even though they are visually faded out.
+        img.setAttribute('aria-hidden', String(!isActive));
       });
       dots.forEach((dot, i) => {
-        dot.classList.toggle('project-card__dot--active', i === index);
+        const isActive = i === index;
+        dot.classList.toggle('project-card__dot--active', isActive);
+        dot.setAttribute('aria-selected', String(isActive));
       });
       currentIndex = index;
+
+      if (announce && status) {
+        status.textContent = images[index].getAttribute('alt') || `${index + 1} / ${images.length}`;
+      }
     }
+
+    const step = (delta) => {
+      showImage((currentIndex + delta + images.length) % images.length, true);
+    };
 
     prevBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const newIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
-      showImage(newIndex);
+      step(-1);
     });
 
     nextBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const newIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
-      showImage(newIndex);
+      step(1);
     });
 
     dots.forEach((dot, index) => {
       dot.addEventListener('click', (e) => {
         e.stopPropagation();
-        showImage(index);
+        showImage(index, true);
       });
     });
+
+    // Left/right arrows move between slides once any carousel control has focus.
+    wrapper.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      if (!e.target.closest('.project-card__arrow, .project-card__dot')) return;
+      e.preventDefault();
+      step(e.key === 'ArrowLeft' ? -1 : 1);
+    });
+
+    showImage(0, false);
   });
 }
 
@@ -281,6 +381,39 @@ function groupByCategory(projects) {
 }
 
 /**
+ * Escapes a value for interpolation into HTML, in either text or attribute
+ * position. The project data is self-authored, but the card template builds
+ * markup by string concatenation, so unescaped values are a latent hazard.
+ */
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Alt text for a carousel image. Projects may supply per-image alt text via an
+ * "imageAlts" array in projects.json; otherwise each image is distinguished by
+ * position, so a five-image card no longer announces the same title five times.
+ */
+function imageAlt(project, title, index, total) {
+  const alts = project['imageAlts_' + currentLang] || project.imageAlts_en || project.imageAlts;
+  if (Array.isArray(alts) && alts[index]) return alts[index];
+  return total > 1 ? `${title} — screenshot ${index + 1} of ${total}` : `${title} — screenshot`;
+}
+
+/**
+ * Returns true for a URL that actually points somewhere. Projects without a
+ * public demo or repo carry "#" as a placeholder; those links are not rendered.
+ */
+function isRealUrl(url) {
+  return Boolean(url) && url !== '#';
+}
+
+/**
  * Creates a URL-friendly slug from a string.
  */
 function slugify(text) {
@@ -290,106 +423,165 @@ function slugify(text) {
 /**
  * Watches .project-category sections and highlights the matching sidebar link.
  */
+let categoryObserver = null;
+let categoryTopMargin = null;
+let categoryResizeBound = false;
+
 function observeCategorySections() {
   const sections = document.querySelectorAll('.project-category');
   const links = document.querySelectorAll('.project-list__category');
 
   if (!sections.length || !links.length) return;
 
-  const header = document.querySelector('.header');
-  const projectList = document.querySelector('.project-list');
+  // Always replace the previous observer; re-rendering the cards on a language
+  // switch invalidates the nodes it was watching.
+  if (categoryObserver) categoryObserver.disconnect();
 
-  function getTopMargin() {
-    const headerHeight = header.offsetHeight;
-    const isMobile = window.innerWidth <= 768;
-    const projectListHeight = isMobile ? projectList.offsetHeight : 0;
-    return headerHeight + projectListHeight;
-  }
+  categoryTopMargin = getCategoryTopMargin();
 
-  let topMargin = getTopMargin();
-
-  const observer = new IntersectionObserver((entries) => {
+  categoryObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        links.forEach((link) => {
-          link.classList.toggle(
-            'project-list__category--active',
-            link.dataset.category === id.replace('category-', '')
-          );
-        });
-      }
+      if (!entry.isIntersecting) return;
+      const category = entry.target.id.replace('category-', '');
+      links.forEach((link) => {
+        link.classList.toggle('project-list__category--active', link.dataset.category === category);
+      });
     });
   }, {
-    rootMargin: `-${topMargin}px 0px -40% 0px`,
+    rootMargin: `-${categoryTopMargin}px 0px -40% 0px`,
     threshold: 0
   });
 
-  sections.forEach((section) => observer.observe(section));
+  sections.forEach((section) => categoryObserver.observe(section));
 
-  // Re-create observer on resize since rootMargin can't update dynamically
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      const newTopMargin = getTopMargin();
-      if (newTopMargin !== topMargin) {
-        topMargin = newTopMargin;
-        observer.disconnect();
-        const newObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const id = entry.target.id;
-              links.forEach((link) => {
-                link.classList.toggle(
-                  'project-list__category--active',
-                  link.dataset.category === id.replace('category-', '')
-                );
-              });
-            }
-          });
-        }, {
-          rootMargin: `-${newTopMargin}px 0px -40% 0px`,
-          threshold: 0
-        });
-        sections.forEach((section) => newObserver.observe(section));
-      }
-    }, 250);
-  });
+  // rootMargin can't be updated on a live observer, so the observer is rebuilt
+  // when the sticky offset changes. Bind the listener only once.
+  if (!categoryResizeBound) {
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (getCategoryTopMargin() !== categoryTopMargin) {
+          observeCategorySections();
+        }
+      }, 250);
+    });
+    categoryResizeBound = true;
+  }
+}
+
+/**
+ * Height that sticky elements occupy at the top of the viewport: the header,
+ * plus the project list on mobile where it also sticks.
+ */
+function getCategoryTopMargin() {
+  const header = document.querySelector('.header');
+  const projectList = document.querySelector('.project-list');
+  const headerHeight = header ? header.offsetHeight : 0;
+  const isMobile = window.innerWidth <= 768;
+  const projectListHeight = isMobile && projectList ? projectList.offsetHeight : 0;
+  return headerHeight + projectListHeight;
 }
 
 /**
  * Accounts for the sticky header height when using anchor navigation.
  */
 function setupHeaderScrollOffset() {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', (e) => {
-      const targetId = anchor.getAttribute('href');
+  // Delegated, because the category links are rendered from JSON after load
+  // and are replaced again on every language switch.
+  document.addEventListener('click', (e) => {
+    const anchor = e.target.closest('a[href^="#"]');
+    if (!anchor) return;
 
-      if (targetId === '#' || targetId === '#top') {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
+    const targetId = anchor.getAttribute('href');
 
-      const target = document.querySelector(targetId);
-      if (!target) return;
-
+    if (targetId === '#' || targetId === '#top') {
       e.preventDefault();
-      const headerHeight = document.querySelector('.header').offsetHeight;
-      let offset = headerHeight;
+      scrollToPosition(0);
+      return;
+    }
 
-      // On mobile, category links need to also clear the sticky project list
-      if (window.innerWidth <= 768 && anchor.closest('.project-list')) {
-        const projectList = document.querySelector('.project-list');
-        if (projectList) {
-          offset += projectList.offsetHeight;
-        }
-      }
+    const target = document.querySelector(targetId);
+    if (!target) return;
 
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
-    });
+    e.preventDefault();
+    let offset = document.querySelector('.header').offsetHeight;
+
+    // On mobile, category links need to also clear the sticky project list
+    if (window.innerWidth <= 768 && anchor.closest('.project-list')) {
+      const projectList = document.querySelector('.project-list');
+      if (projectList) offset += projectList.offsetHeight;
+    }
+
+    scrollToPosition(target.getBoundingClientRect().top + window.scrollY - offset);
+  });
+}
+
+/**
+ * Re-applies a landing #hash once the cards exist.
+ *
+ * The browser resolves the fragment during load, but the project cards are
+ * only rendered after two awaited fetches. Anything below the projects section
+ * — which is what datenschutz.html's "index.html#contact" link points at — has
+ * moved hundreds of pixels down by then, leaving the visitor mid-projects.
+ *
+ * Jumps rather than smooth-scrolling: an animation on first paint reads as a
+ * glitch, not as navigation.
+ */
+function restoreHashPosition() {
+  if (!window.location.hash) return;
+
+  let target;
+  try {
+    target = document.querySelector(window.location.hash);
+  } catch (error) {
+    // A fragment that isn't a valid selector, e.g. "#1foo".
+    return;
+  }
+  if (!target) return;
+
+  const header = document.querySelector('.header');
+  const offset = header ? header.offsetHeight : 0;
+  window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'auto' });
+}
+
+/**
+ * Scrolls to a position, honouring the visitor's reduced-motion preference.
+ */
+function scrollToPosition(top) {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({ top, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+}
+
+/**
+ * Copy-to-clipboard for the contact email. The address is always present as
+ * selectable text, so this is an enhancement rather than the only route.
+ */
+function setupEmailCopy() {
+  const button = document.querySelector('.contact__copy');
+  const status = document.querySelector('.contact__copy-status');
+  if (!button) return;
+
+  const email = button.dataset.email;
+  if (!email) return;
+
+  button.addEventListener('click', async () => {
+    const t = translations[currentLang] || {};
+    let ok = false;
+
+    try {
+      // Requires a secure context; github.io and localhost both qualify.
+      await navigator.clipboard.writeText(email);
+      ok = true;
+    } catch (error) {
+      console.error('Clipboard write failed:', error);
+    }
+
+    if (status) {
+      status.textContent = getNestedValue(t, ok ? 'contact.copied' : 'contact.copyFailed') || (ok ? 'Copied' : 'Copy failed');
+    }
+    button.classList.toggle('contact__copy--copied', ok);
+    setTimeout(() => button.classList.remove('contact__copy--copied'), 2000);
   });
 }
 
@@ -402,17 +594,57 @@ function setupHamburgerMenu() {
 
   if (!hamburger || !mobileNav) return;
 
+  function setOpen(open, moveFocus = true) {
+    hamburger.classList.toggle('header__hamburger--active', open);
+    mobileNav.classList.toggle('mobile-nav--open', open);
+    hamburger.setAttribute('aria-expanded', String(open));
+    // The overlay covers the page, so its content must be the only thing
+    // reachable while it is open.
+    mobileNav.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+
+    if (!moveFocus) return;
+
+    if (open) {
+      const firstLink = mobileNav.querySelector('.mobile-nav__link');
+      if (firstLink) firstLink.focus();
+    } else {
+      hamburger.focus();
+    }
+  }
+
   hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('header__hamburger--active');
-    mobileNav.classList.toggle('mobile-nav--open');
-    document.body.style.overflow = mobileNav.classList.contains('mobile-nav--open') ? 'hidden' : '';
+    setOpen(!mobileNav.classList.contains('mobile-nav--open'));
   });
 
   mobileNav.querySelectorAll('.mobile-nav__link').forEach((link) => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('header__hamburger--active');
-      mobileNav.classList.remove('mobile-nav--open');
-      document.body.style.overflow = '';
-    });
+    link.addEventListener('click', () => setOpen(false));
   });
+
+  document.addEventListener('keydown', (e) => {
+    if (!mobileNav.classList.contains('mobile-nav--open')) return;
+
+    if (e.key === 'Escape') {
+      setOpen(false);
+      return;
+    }
+
+    if (e.key !== 'Tab') return;
+
+    // Focus trap: cycle between the close button and the overlay's links.
+    const focusable = [hamburger, ...mobileNav.querySelectorAll('.mobile-nav__link')];
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  // Establish the initial ARIA state without stealing focus on page load.
+  setOpen(false, false);
 }
